@@ -3,9 +3,9 @@ export class FlybyCamera {
         this.canvas = canvas;
         
         // Camera properties
-        this.position = new Float32Array([0, 5, 15]);
-        this.yaw = -90.0; // Start looking forward
-        this.pitch = -20.0; // Look slightly down
+        this.position = new Float32Array([8, 3, 5]);
+        this.yaw = -150.0; // Olhando para o vidro de lado
+        this.pitch = -10.0; // Look slightly down
         
         // Movement
         this.moveSpeed = 5.0; // units per second
@@ -310,9 +310,9 @@ export class FlybyCamera {
     }
     
     reset() {
-        this.position = new Float32Array([0, 5, 15]);
-        this.yaw = -90.0;
-        this.pitch = -20.0;
+        this.position = new Float32Array([8, 3, 5]);
+        this.yaw = -150.0;
+        this.pitch = -10.0;
         this.lastFrameTime = performance.now();
         this.updateViewMatrix();
     }

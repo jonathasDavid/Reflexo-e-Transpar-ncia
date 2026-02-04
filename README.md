@@ -1,146 +1,91 @@
-# WebGL Reflection and Transparency Application
+# Trabalho de Computação Gráfica: Reflexo e Transparência
 
-A WebGL2 application demonstrating dynamic reflection and transparency effects using custom shaders, framebuffers, and clipping planes.
+## 📷 Preview
 
-## Features
+<!-- Adicione sua imagem aqui -->
+![Preview do Trabalho](./screenshot.png)
 
-- ✅ Custom vertex and fragment shaders
-- ✅ Dynamic reflection using framebuffers (not cube maps)
-- ✅ Multi-pass rendering (reflection pass + main scene pass)
-- ✅ Adjustable transparency with Fresnel effect
-- ✅ Textures on all objects including glass plane
-- ✅ Clipping plane implementation
-- ✅ Flyby camera with keyboard and mouse controls
-- ✅ At least 2 objects (cube and sphere) with glass plane dividing them
+---
 
-## Requirements
+## 🎯 Objetivo
 
-- Modern web browser with WebGL2 support (Chrome, Firefox, Edge, Safari)
-- Local web server (required for loading shader files)
+Desenvolver um efeito de **reflexo e transparência** em um plano utilizando WebGL/GLSL. O shader simula um material translúcido com reflexo, como um vidro escuro.
 
-## Setup and Running
+---
 
-### Option 1: Using Python HTTP Server
+## ✅ Requisitos Técnicos Implementados
 
-```bash
-# Python 3
-python3 -m http.server 8000
+### 1. Shader Customizado
+- Implementação própria dos shaders vertex e fragment
+- O shader calcula a reflexão e a transparência com base no ângulo de visão (efeito Fresnel)
+- Não são utilizadas texturas prontas para reflexão
 
-# Python 2
-python -m SimpleHTTPServer 8000
-```
+### 2. Reflexo e Transparência Dinâmicos
+- Reflexo simulado utilizando **framebuffer** renderizado a partir da cena
+- Renderização em múltiplos passos (multi-pass rendering)
+- Não utiliza cube map
 
-Then open: `http://localhost:8000`
+### 3. Transparência Controlada
+- Transparência ajustável via **uniform** `uTransparency`
+- Controle disponível na interface através de um slider (0-100%)
 
-### Option 2: Using Node.js HTTP Server
+### 4. Textura Padrão
+- Todos os objetos possuem textura padrão aplicada
+- Inclusive o próprio plano de vidro
 
-```bash
-npx http-server -p 8000
-```
+### 5. Clipping Plane
+- Utiliza clipping plane para renderização seletiva
+- Implementado no vertex/fragment shader
 
-Then open: `http://localhost:8000`
+### 6. Câmera Flyby
+- Movimento livre pela cena com controles WASD
+- Rotação com mouse
+- Subir/descer com Space/Shift
 
-### Option 3: Using VS Code Live Server
+---
 
-1. Install "Live Server" extension in VS Code
-2. Right-click on `index.html`
-3. Select "Open with Live Server"
+## 🎮 Controles
 
-## Controls
+| Tecla | Ação |
+|-------|------|
+| **W/A/S/D** | Movimentar câmera |
+| **Mouse** | Olhar ao redor |
+| **Space** | Subir |
+| **Shift** | Descer |
+| **Scroll** | Ajustar velocidade |
+| **R** | Resetar câmera |
+| **ESC** | Liberar mouse |
 
-### Camera Movement
-- **W** - Move forward
-- **S** - Move backward
-- **A** - Strafe left
-- **D** - Strafe right
-- **Space** - Move up
-- **Shift** - Move down
-- **Mouse Drag** - Look around
-- **Mouse Wheel** - Adjust movement speed
-- **R** - Reset camera position
+---
 
-### UI Controls
-- **Transparency Slider** - Adjust glass transparency (0-100%)
-- **Reset Camera Button** - Reset camera to initial position
+## 🚀 Como Executar
 
-## Technical Implementation
+1. Inicie um servidor local na pasta do projeto:
+   ```bash
+   python -m http.server 8000
+   ```
 
-### Shaders
-- `shaders/vertex.glsl` - Vertex shader with clipping plane support
-- `shaders/fragment.glsl` - Fragment shader for regular objects with Phong lighting
-- `shaders/glass.glsl` - Fragment shader for glass plane with Fresnel effect and reflection
+2. Acesse no navegador:
+   ```
+   http://localhost:8000
+   ```
 
-### Rendering Pipeline
+---
 
-1. **Reflection Pass:**
-   - Render scene to framebuffer from mirrored camera position
-   - Use clipping plane to render only objects above glass plane
-   - Store result in reflection texture
-
-2. **Main Scene Pass:**
-   - Render regular objects normally
-   - Render glass plane with reflection texture sampling
-   - Apply transparency based on viewing angle (Fresnel effect)
-
-### Key Components
-
-- **Camera System** (`js/camera.js`) - Flyby camera with mouse and keyboard controls
-- **Geometry** (`js/geometry.js`) - Cube, sphere, and plane generation
-- **Shaders** (`js/shaders.js`) - Shader loading and texture creation utilities
-- **Framebuffer** (`js/framebuffer.js`) - Framebuffer management for reflection rendering
-- **Main Application** (`js/main.js`) - Main rendering loop and scene management
-
-## Project Structure
+## 📁 Estrutura do Projeto
 
 ```
-trabalhoPDI/
-├── index.html              # Main HTML file
+├── index.html          # Página principal
 ├── js/
-│   ├── main.js            # Main application logic
-│   ├── camera.js          # Flyby camera implementation
-│   ├── geometry.js        # Geometry creation functions
-│   ├── shaders.js         # Shader utilities
-│   └── framebuffer.js    # Framebuffer management
+│   ├── main.js         # Lógica principal e renderização
+│   ├── camera.js       # Sistema de câmera flyby
+│   ├── geometry.js     # Criação de geometrias (cubo, esfera, plano)
+│   ├── framebuffer.js  # Gerenciamento de framebuffers
+│   └── shaders.js      # Utilitários para shaders
 ├── shaders/
-│   ├── vertex.glsl        # Vertex shader
-│   ├── fragment.glsl      # Fragment shader for objects
-│   └── glass.glsl          # Fragment shader for glass
-└── README.md              # This file
+│   ├── vertex.glsl     # Vertex shader dos objetos
+│   ├── fragment.glsl   # Fragment shader dos objetos
+│   ├── glass.v.glsl    # Vertex shader do vidro
+│   └── glass.glsl      # Fragment shader do vidro (Fresnel)
+└── textures/           # Texturas utilizadas
 ```
-
-## Requirements Met
-
-✅ **Shader Customizado** - Custom vertex and fragment shaders implemented  
-✅ **Reflexo e Transparência Dinâmicos** - Framebuffer-based reflection with multi-pass rendering  
-✅ **Transparência Controlada** - Adjustable via uniform (UI slider)  
-✅ **Textura padrão** - All objects have procedural textures  
-✅ **Clipping plane** - Implemented using `gl_ClipDistance`  
-✅ **Câmera flyby** - Full flyby camera with WASD + mouse controls  
-✅ **Demonstração** - Real-time rendering with at least 2 objects divided by glass plane  
-
-## Notes
-
-- The application uses procedural textures (generated in code) for all objects
-- Reflection is calculated using a framebuffer rendered from a mirrored camera position
-- Transparency uses Fresnel effect: more transparent at grazing angles
-- Clipping plane is used to render only objects above the glass plane in reflection pass
-
-## Troubleshooting
-
-**Black screen:**
-- Ensure you're running from a web server (not file://)
-- Check browser console for errors
-- Verify WebGL2 support: `chrome://gpu` or `about:support` in Firefox
-
-**Shaders not loading:**
-- Check that shader files are in `shaders/` directory
-- Verify web server is running
-- Check browser console for 404 errors
-
-**Performance issues:**
-- Reduce reflection framebuffer resolution in `main.js` (currently 1024x1024)
-- Reduce sphere segments in geometry creation
-
-## License
-
-Educational project for Computer Graphics course.

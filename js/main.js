@@ -103,30 +103,30 @@ class WebGLApp {
   }
 
   createGeometry() {
-    // Create cube
+    // Create cube - posicionado à esquerda do vidro (X negativo)
     const cube = createCube();
     const cubeVAO = this.createVAO(cube);
     this.objects.push({
       vao: cubeVAO,
       count: cube.indices.length,
-      modelMatrix: this.createModelMatrix([-3, 2, -3], [0, 0, 0], [1, 1, 1])
+      modelMatrix: this.createModelMatrix([-4, 1, -3], [0, 0, 0], [1.5, 1.5, 1.5])
     });
 
-    // Create sphere
+    // Create sphere - posicionada à direita do vidro (X positivo)
     const sphere = createSphere(1, 32);
     const sphereVAO = this.createVAO(sphere);
     this.objects.push({
       vao: sphereVAO,
       count: sphere.indices.length,
-      modelMatrix: this.createModelMatrix([3, 2, -3], [0, 0, 0], [1, 1, 1])
+      modelMatrix: this.createModelMatrix([4, 1.5, -3], [0, 0, 0], [1.5, 1.5, 1.5])
     });
 
-    // Create glass plane
-    const plane = createPlane(20, 20);
+    // Create glass plane - vertical, entre os objetos
+    const plane = createPlane(15, 10);
     this.glassPlane = {
       vao: this.createVAO(plane),
       count: plane.indices.length,
-      modelMatrix: this.createModelMatrix([0, 0, 0], [0, 0, 0], [1, 1, 1])
+      modelMatrix: this.createVerticalPlaneMatrix([0, 2, -3])
     };
   }
 
@@ -168,7 +168,7 @@ class WebGLApp {
   }
 
   createTextures() {
-    const texture = loadTexture(this.gl, 'textures/Wood049_2K-JPG_Color.jpg');
+    const texture = loadTexture(this.gl, 'textures/blueimg.jpg');
     this.textures.push(texture);
     this.textures.push(texture);
     this.glassTexture = texture;
@@ -199,6 +199,23 @@ class WebGLApp {
     return matrix;
   }
 
+  // Cria matriz para plano vertical (rotacionado 90° no eixo Z)
+  createVerticalPlaneMatrix(translation) {
+    const matrix = new Float32Array(16);
+    
+    // Rotação de 90° no eixo Z para deixar o plano vertical
+    // O plano original tem normal (0, 1, 0), queremos normal (1, 0, 0)
+    const cos90 = 0;
+    const sin90 = 1;
+    
+    matrix[0] = cos90;  matrix[1] = sin90;  matrix[2] = 0;  matrix[3] = 0;
+    matrix[4] = -sin90; matrix[5] = cos90;  matrix[6] = 0;  matrix[7] = 0;
+    matrix[8] = 0;      matrix[9] = 0;      matrix[10] = 1; matrix[11] = 0;
+    matrix[12] = translation[0]; matrix[13] = translation[1]; matrix[14] = translation[2]; matrix[15] = 1;
+
+    return matrix;
+  }
+
   calculateReflectionViewMatrix() {
     const cameraPos = this.camera.getPosition();
     const cameraFwd = this.camera.getForward();
@@ -209,9 +226,9 @@ class WebGLApp {
       cameraPos[2] + cameraFwd[2]
     ]);
 
-    // Mirror position and target across the glass plane (y=0)
-    const eye = new Float32Array([cameraPos[0], -cameraPos[1], cameraPos[2]]);
-    const center = new Float32Array([cameraTarget[0], -cameraTarget[1], cameraTarget[2]]);
+    // Mirror position and target across the glass plane (x=0) - plano vertical
+    const eye = new Float32Array([-cameraPos[0], cameraPos[1], cameraPos[2]]);
+    const center = new Float32Array([-cameraTarget[0], cameraTarget[1], cameraTarget[2]]);
 
     // The 'up' vector is kept as (0, 1, 0) as the look-at calculation
     // will correctly orthogonalize the axes.
@@ -273,11 +290,11 @@ class WebGLApp {
     // Calculate reflection view matrix
     const reflectionView = this.calculateReflectionViewMatrix();
 
-    // Clipping plane (objects above plane y > 0)
-    const clippingPlane = new Float32Array([0, 1, 0, 0]); // Normal pointing down
+    // Clipping plane - renderiza objetos do lado positivo de X (x > 0)
+    const clippingPlane = new Float32Array([1, 0, 0, 0]); // Normal apontando para +X
 
-    // Reflected light position
-    const reflectedLightPos = new Float32Array([5, -10, 5]);
+    // Reflected light position (espelhada no eixo X)
+    const reflectedLightPos = new Float32Array([-5, 10, 5]);
 
     // Render objects
     this.gl.useProgram(this.program);
