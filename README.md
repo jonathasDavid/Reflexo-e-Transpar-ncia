@@ -1,12 +1,5 @@
 # Trabalho de Computação Gráfica: Reflexo e Transparência
 
-## 📷 Preview
-
-<!-- Adicione sua imagem aqui -->
-![Preview do Trabalho](./screenshot.png)
-
----
-
 ## 🎯 Objetivo
 
 Desenvolver um efeito de **reflexo e transparência** em um plano utilizando WebGL/GLSL. O shader simula um material translúcido com reflexo, como um vidro escuro.
